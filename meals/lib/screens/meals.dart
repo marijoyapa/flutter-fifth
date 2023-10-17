@@ -3,23 +3,37 @@ import 'package:meals/model/meal.dart';
 import 'package:meals/data/dummy_data.dart';
 import 'package:meals/widgets/category_grid_item.dart';
 import 'package:meals/widgets/meal_item.dart';
+import 'package:meals/widgets/meal_details.dart';
 
 class MealsScreen extends StatelessWidget {
   MealsScreen({
     super.key,
-    required this.title,
+    this.title,
     required this.meals,
   });
 
-  final String title;
+  final String? title;
   final List<Meal> meals;
-  
+
+  void _openMealDetails(BuildContext context, Meal meal) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => MealDetail(meal: meal),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget content = ListView.builder(
       itemCount: meals.length,
-      itemBuilder: (ctx, index) => MealItem(meal: meals[index]),
+      itemBuilder: (ctx, index) => MealItem(
+        meal: meals[index],
+        onSelectMeal: (context, meal) {
+          _openMealDetails(context, meal);
+        },
+      ),
     );
     if (meals.isEmpty) {
       content = Center(
@@ -43,11 +57,14 @@ class MealsScreen extends StatelessWidget {
         ),
       );
     }
+    if (title == null) {
+      return content;
+    }
+
     return Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(title!),
         ),
-        body: content
-        );
+        body: content);
   }
 }
