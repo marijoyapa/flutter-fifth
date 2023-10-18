@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:meals/screens/filter.dart';
 import 'package:meals/providers/meals_providers.dart';
 
 enum Filter {
