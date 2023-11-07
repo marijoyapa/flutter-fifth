@@ -1,78 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:meals/screens/meals.dart';
 // import 'package:meals/screens/tabs.dart';
 // import 'package:meals/widgets/main_drawer.dart';
+import 'package:meals/providers/filters_provider.dart';
 
-enum Filter {
-  gluttenFree,
-  lactoseFree,
-  vegetarian,
-  vegan,
-}
 
-class FilterScreen extends StatefulWidget {
-  const FilterScreen({super.key, required this.filterSet});
 
-  final Map<Filter, bool> filterSet;
+
+class FilterScreen extends ConsumerWidget {
+  const FilterScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _FilterScreenState();
-  }
-}
-
-class _FilterScreenState extends State<FilterScreen> {
-  var _gluttenFreeFilterSet = false;
-  var _lactoseFreeFilterSet = false;
-  var _vegetarianFilterSet = false;
-  var _veganFilterSet = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _gluttenFreeFilterSet = widget.filterSet[Filter.gluttenFree]!;
-    _lactoseFreeFilterSet = widget.filterSet[Filter.lactoseFree]!;
-    _vegetarianFilterSet = widget.filterSet[Filter.vegetarian]!;
-    _veganFilterSet = widget.filterSet[Filter.vegan]!;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeFilters = ref.watch(filtersProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your filters'),
       ),
-      // drawer: MainDrawer(
-      //   onSelectScreen: (identifier) {
-      //     Navigator.of(context).pop();
-      //     if (identifier == 'Meals') {
-      //       Navigator.of(context).push(
-      //         MaterialPageRoute(
-      //           builder: (ctx) => const TabsScreen(),
-      //         ),
-      //       );
-      //     }
-      //   },
-      // ),
-      body: WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pop({
-            Filter.gluttenFree: _gluttenFreeFilterSet,
-            Filter.lactoseFree: _lactoseFreeFilterSet,
-            Filter.vegetarian: _vegetarianFilterSet,
-            Filter.vegan: _veganFilterSet,
-          });
 
-          return false;
-        },
-        child: Column(
+      body: Column(
           children: [
             SwitchListTile(
-              value: _gluttenFreeFilterSet,
+              value: activeFilters[Filter.gluttenFree]!,
               onChanged: (isOn) {
-                setState(() {
-                  _gluttenFreeFilterSet = isOn;
-                });
+                ref.read(filtersProvider.notifier).setFilter(Filter.gluttenFree, isOn);
               },
               title: Text(
                 'Gluten-free',
@@ -90,11 +42,9 @@ class _FilterScreenState extends State<FilterScreen> {
               contentPadding: const EdgeInsets.only(left: 34, right: 22),
             ),
             SwitchListTile(
-              value: _lactoseFreeFilterSet,
+              value: activeFilters[Filter.lactoseFree]!,
               onChanged: (isOn) {
-                setState(() {
-                  _lactoseFreeFilterSet = isOn;
-                });
+                ref.read(filtersProvider.notifier).setFilter(Filter.lactoseFree, isOn);
               },
               title: Text(
                 'Lactose-free',
@@ -112,11 +62,9 @@ class _FilterScreenState extends State<FilterScreen> {
               contentPadding: const EdgeInsets.only(left: 34, right: 22),
             ),
             SwitchListTile(
-              value: _vegetarianFilterSet,
+              value: activeFilters[Filter.vegetarian]!,
               onChanged: (isOn) {
-                setState(() {
-                  _vegetarianFilterSet = isOn;
-                });
+                ref.read(filtersProvider.notifier).setFilter(Filter.vegetarian, isOn);
               },
               title: Text(
                 'Vegetarian',
@@ -134,11 +82,9 @@ class _FilterScreenState extends State<FilterScreen> {
               contentPadding: const EdgeInsets.only(left: 34, right: 22),
             ),
             SwitchListTile(
-              value: _veganFilterSet,
+              value: activeFilters[Filter.vegan]!,
               onChanged: (isOn) {
-                setState(() {
-                  _veganFilterSet = isOn;
-                });
+                ref.read(filtersProvider.notifier).setFilter(Filter.vegan, isOn);
               },
               title: Text(
                 'Vegan',
@@ -157,7 +103,6 @@ class _FilterScreenState extends State<FilterScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 }
